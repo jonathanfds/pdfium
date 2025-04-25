@@ -1,5 +1,5 @@
 {
-  "name": "@jonathanfds/pdfium",
+  "name": "@jonathanfd/pdfium",
   "version": "2.1.6",
   "description": "Universal wrapper for PDFium",
   "type": "module",
@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jonathanfds/pdfium"
+    "url": "git+https://github.com/jonathanfds/pdfium.git"
   },
   "author": "Yevhenii Hyzyla",
   "license": "MIT",
