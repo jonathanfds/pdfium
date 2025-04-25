@@ -70,7 +70,7 @@ export class PDFiumLibrary {
     this.module = module;
   }
 
-  async loadDocument(buff: Uint8Array, password = "", renderFormFields = false) {
+  async loadDocument(buff: Uint8Array, password = "") {
     const size = buff.length;
 
     // This line allocates a block of memory of size bytes and returns a pointer to the first byte of the block.
@@ -124,9 +124,7 @@ export class PDFiumLibrary {
       documentPtr: documentPtr,
       documentIdx: documentIdx,
     });
-    if (renderFormFields) {
-      document.initializeFormFields();
-    }
+
     // Free the allocated memory for the password string
     if (passwordPtr !== null) {
       this.module.wasmExports.free(passwordPtr);
