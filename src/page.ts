@@ -10,6 +10,7 @@ export class PDFiumPage {
   private readonly module: t.PDFium;
   private readonly pageIdx: number;
   private readonly documentIdx: number;
+  private readonly formHandle: number | null;
   number: number; // 0-based index of the page
 
   constructor(options: {
@@ -17,11 +18,13 @@ export class PDFiumPage {
     pageIdx: number;
     documentIdx: number;
     pageIndex: number;
+    formHandle: number | null;
   }) {
     this.module = options.module;
     this.pageIdx = options.pageIdx;
     this.documentIdx = options.documentIdx;
     this.number = options.pageIndex;
+    this.formHandle = options.formHandle;
   }
 
   /**
@@ -116,6 +119,15 @@ export class PDFiumPage {
       height, // height
       0xffffffff, // color (white)
     );
+
+    const renderFormFields = this.formHandle !== null;
+    let flags = FPDFRenderFlag.REVERSE_BYTE_ORDER | FPDFRenderFlag.ANNOT | FPDFRenderFlag.LCD_TEXT;
+
+    if (renderFormFields) {
+      //If rendering form fields, we need to remove the ANNOT flag
+      flags = flags & ~FPDFRenderFlag.ANNOT;
+    }
+
     this.module._FPDF_RenderPageBitmap(
       bitmap,
       this.pageIdx,
@@ -124,8 +136,22 @@ export class PDFiumPage {
       width, // size_x
       height, // size_y
       0, // rotate (0, normal)
-      FPDFRenderFlag.REVERSE_BYTE_ORDER | FPDFRenderFlag.ANNOT | FPDFRenderFlag.LCD_TEXT, // flags
+      flags // flags
     );
+    if (renderFormFields) {
+      this.module._FPDF_FFLDraw(
+        this.formHandle,
+        bitmap,
+        this.pageIdx,
+        0, // start_x
+        0, // start_y
+        width, // size_x
+        height, // size_y
+        0, // rotate (0, normal)
+        flags // flags
+      );
+      this.module._FORM_OnBeforeClosePage(this.pageIdx, this.formHandle);
+    }
     this.module._FPDFBitmap_Destroy(bitmap);
     this.module._FPDF_ClosePage(this.pageIdx);
 
