@@ -39,7 +39,7 @@ export class PDFiumDocument {
 
     // Zero out the entire callbacks structure first (equivalent to memset in C)
     for (let i = 0; i < callbacksSize / 4; i++) {
-      this.module.HEAP32[(callbacksPtr / 4) + i] = 0;
+      this.module.HEAP32[callbacksPtr / 4 + i] = 0;
     }
     //Set the version field to 2
     this.module.HEAP32[callbacksPtr / 4] = 2;

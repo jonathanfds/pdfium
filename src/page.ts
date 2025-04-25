@@ -136,7 +136,7 @@ export class PDFiumPage {
       width, // size_x
       height, // size_y
       0, // rotate (0, normal)
-      flags // flags
+      flags, // flags
     );
     if (renderFormFields) {
       this.module._FPDF_FFLDraw(
@@ -148,7 +148,7 @@ export class PDFiumPage {
         width, // size_x
         height, // size_y
         0, // rotate (0, normal)
-        flags // flags
+        flags, // flags
       );
       this.module._FORM_OnBeforeClosePage(this.pageIdx, this.formHandle);
     }
