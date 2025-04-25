@@ -34,6 +34,10 @@ type PDFiumLibraryInitOptions = {
   wasmUrl?: string;
   wasmBinary?: ArrayBuffer;
 };
+type PDFiumLoadDocumentOptions = {
+  password?: string;
+  renderFormFields?: boolean;
+};
 
 export class PDFiumLibrary {
   private readonly module: t.PDFium;
@@ -70,9 +74,17 @@ export class PDFiumLibrary {
     this.module = module;
   }
 
-  async loadDocument(buff: Uint8Array, password = "", renderFormFields = false) {
+  async loadDocument(buff: Uint8Array, loadOptions: string | PDFiumLoadDocumentOptions = {}) {
+    let password: string | undefined;
+    let renderFormFields = false;
+    // If options is a string, treat it as a password. For backward compatibility.
+    if (typeof loadOptions === "string") {
+      password = loadOptions;
+    }
+    else if (typeof loadOptions === "object") {
+      ({ password, renderFormFields=false } = loadOptions);
+    }
     const size = buff.length;
-
     // This line allocates a block of memory of size bytes and returns a pointer to the first byte of the block.
     //  The malloc function is a standard C library function for memory allocation, and here it's exposed via
     // this.module.asm, which likely represents the compiled WebAssembly module. The returned pointer (ptr) is

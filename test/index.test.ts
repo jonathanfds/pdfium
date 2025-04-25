@@ -184,6 +184,17 @@ describe("PDFium", () => {
       });
     });
 
+    test("should render page with form fields", async () => {
+      const buff = await fs.readFile("test/data/test_1.pdf");
+      const document = await library.loadDocument(buff, { renderFormFields: true});
+      const result = await document.getPage(0).render({
+        scale: 3,
+        render: renderFunction,
+      });
+      expect(result.data).toMatchImageSnapshot();
+      document.destroy();
+    });
+
     test("should open a PDF with password", async () => {
       const buff = await fs.readFile("test/data/test_1_pass_12345678.pdf");
       const password = "12345678";
